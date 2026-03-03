@@ -65,7 +65,7 @@ function buildAdminEmail({ name, email, message, submittedAt }) {
         </div>
 
         <div style="background:#f9fafb;padding:14px 24px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px;">
-          © ${new Date().getFullYear()} CodeNest • codenest.ro
+          © ${new Date().getFullYear()} codenest • codenest.ro
         </div>
       </div>
     </body>

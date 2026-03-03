@@ -265,6 +265,9 @@ export function ContactForm() {
             style={{ fontFamily: 'Inter, sans-serif' }}
           >
             <p>{t('contact.footer')}</p>
+            <p className="mt-2 text-xs tracking-widest uppercase opacity-60">
+              Built with React · Express
+            </p>
           </div>
         </motion.div>
       </div>

@@ -82,20 +82,16 @@ export function Sidebar() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="fixed top-16 left-0 right-0 z-40 lg:hidden px-6 py-3"
+        className="fixed top-2.5 left-25 z-50 lg:hidden px-6 py-3"
       >
         {navItems.find(item => item.id === activeSection) && (
-          <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 w-fit">
-            {(() => {
-              const currentItem = navItems.find(item => item.id === activeSection);
-              const Icon = currentItem?.icon;
-              return Icon ? <Icon className="w-3.5 h-3.5 text-[#10B981]" /> : null;
-            })()}
-            <span 
-              className="text-sm text-gray-400 font-medium"
+          <div className="flex items-center gap-2 px-3 py-2 w-fit">
+
+            <span
+              className="text-xs text-gray-600 font-small"
               style={{ fontFamily: 'Inter, sans-serif' }}
             >
-              {t(`nav.${activeSection}`)}
+              {t(`nav.${activeSection}`).toUpperCase()}
             </span>
           </div>
         )}
@@ -126,7 +122,7 @@ export function Sidebar() {
         }}
       >
         {/* Subtle right edge fade */}
-        <div 
+        <div
           className="absolute top-0 right-0 bottom-0 w-px"
           style={{
             background: 'linear-gradient(180deg, transparent 0%, rgba(16, 185, 129, 0.1) 50%, transparent 100%)'
@@ -184,11 +180,10 @@ export function Sidebar() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 + index * 0.05 }}
                 onClick={() => scrollToSection(item.id)}
-                className={`w-full text-left px-4 py-2.5 rounded-lg transition-all text-sm flex items-center gap-3 font-medium ${
-                  activeSection === item.id
+                className={`w-full text-left px-4 py-2.5 rounded-lg transition-all text-sm flex items-center gap-3 font-medium ${activeSection === item.id
                     ? 'text-[#10B981] bg-[#10B981]/10 shadow-sm'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
+                  }`}
                 style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
@@ -238,9 +233,8 @@ export function Sidebar() {
               onClick={() => setLanguage('en')}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className={`text-2xl transition-all rounded-lg p-1 ${
-                language === 'en' ? 'opacity-100 scale-110 ring-2 ring-[#10B981]/30' : 'opacity-40 hover:opacity-70'
-              }`}
+              className={`text-2xl transition-all rounded-lg p-1 ${language === 'en' ? 'opacity-100 scale-110 ring-2 ring-[#10B981]/30' : 'opacity-40 hover:opacity-70'
+                }`}
               title="English"
             >
               🇬🇧
@@ -249,9 +243,8 @@ export function Sidebar() {
               onClick={() => setLanguage('ro')}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className={`text-2xl transition-all rounded-lg p-1 ${
-                language === 'ro' ? 'opacity-100 scale-110 ring-2 ring-[#10B981]/30' : 'opacity-40 hover:opacity-70'
-              }`}
+              className={`text-2xl transition-all rounded-lg p-1 ${language === 'ro' ? 'opacity-100 scale-110 ring-2 ring-[#10B981]/30' : 'opacity-40 hover:opacity-70'
+                }`}
               title="Română"
             >
               🇷🇴
@@ -275,7 +268,7 @@ export function Sidebar() {
             }}
           >
             {/* Subtle right edge fade */}
-            <div 
+            <div
               className="absolute top-0 right-0 bottom-0 w-px"
               style={{
                 background: 'linear-gradient(180deg, transparent 0%, rgba(16, 185, 129, 0.15) 50%, transparent 100%)'
@@ -325,11 +318,10 @@ export function Sidebar() {
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
-                    className={`w-full text-left px-4 py-2.5 rounded-lg transition-all text-sm flex items-center gap-3 font-medium ${
-                      activeSection === item.id
+                    className={`w-full text-left px-4 py-2.5 rounded-lg transition-all text-sm flex items-center gap-3 font-medium ${activeSection === item.id
                         ? 'text-[#10B981] bg-[#10B981]/10 shadow-sm'
                         : 'text-gray-400 hover:text-white hover:bg-white/5'
-                    }`}
+                      }`}
                     style={{ fontFamily: 'Inter, sans-serif' }}
                   >
                     <Icon className="w-4 h-4 flex-shrink-0" />
@@ -371,18 +363,16 @@ export function Sidebar() {
               <div className="flex gap-3 justify-center">
                 <button
                   onClick={() => setLanguage('en')}
-                  className={`text-2xl transition-all rounded-lg p-1 ${
-                    language === 'en' ? 'opacity-100 scale-110 ring-2 ring-[#10B981]/30' : 'opacity-40 hover:opacity-70'
-                  }`}
+                  className={`text-2xl transition-all rounded-lg p-1 ${language === 'en' ? 'opacity-100 scale-110 ring-2 ring-[#10B981]/30' : 'opacity-40 hover:opacity-70'
+                    }`}
                   title="English"
                 >
                   🇬🇧
                 </button>
                 <button
                   onClick={() => setLanguage('ro')}
-                  className={`text-2xl transition-all rounded-lg p-1 ${
-                    language === 'ro' ? 'opacity-100 scale-110 ring-2 ring-[#10B981]/30' : 'opacity-40 hover:opacity-70'
-                  }`}
+                  className={`text-2xl transition-all rounded-lg p-1 ${language === 'ro' ? 'opacity-100 scale-110 ring-2 ring-[#10B981]/30' : 'opacity-40 hover:opacity-70'
+                    }`}
                   title="Română"
                 >
                   🇷🇴

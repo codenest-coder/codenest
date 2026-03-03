@@ -6,20 +6,20 @@ const app = express();
 app.use(express.json({ limit: "200kb" }));
 
 function esc(s = "") {
-    return String(s)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+  return String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function nl2br(s = "") {
-    return esc(s).replaceAll("\n", "<br/>");
+  return esc(s).replaceAll("\n", "<br/>");
 }
 
 function buildAdminEmail({ name, email, message, submittedAt }) {
-    const brandHeader = `
+  const brandHeader = `
     <div style="background:#0F1419;padding:18px 24px;border-top-left-radius:12px;border-top-right-radius:12px;">
       <div style="font-size:22px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">
         <span style="color:#10B981;">code</span><span style="color:#FFFFFF;">nest</span>
@@ -27,11 +27,11 @@ function buildAdminEmail({ name, email, message, submittedAt }) {
     </div>
   `;
 
-    const safeName = esc(name);
-    const safeEmail = esc(email);
-    const safeMessage = nl2br(message);
+  const safeName = esc(name);
+  const safeEmail = esc(email);
+  const safeMessage = nl2br(message);
 
-    const html = `<!doctype html>
+  const html = `<!doctype html>
   <html>
     <body style="margin:0;background:#f3f4f6;padding:30px;font-family:Arial,Helvetica,sans-serif;">
       <div style="max-width:640px;margin:auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e5e7eb;">
@@ -71,7 +71,7 @@ function buildAdminEmail({ name, email, message, submittedAt }) {
     </body>
   </html>`;
 
-    const text = `New Contact Message
+  const text = `New Contact Message
 
 Name: ${name}
 Email: ${email}
@@ -81,11 +81,11 @@ Message:
 ${message}
 `;
 
-    return { html, text };
+  return { html, text };
 }
 
 function buildUserEmail({ name, message, siteUrl }) {
-    const brandHeader = `
+  const brandHeader = `
     <div style="background:#0F1419;padding:18px 24px;border-top-left-radius:12px;border-top-right-radius:12px;">
       <div style="font-size:22px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">
         <span style="color:#10B981;">code</span><span style="color:#FFFFFF;">nest</span>
@@ -93,10 +93,10 @@ function buildUserEmail({ name, message, siteUrl }) {
     </div>
   `;
 
-    const safeName = esc(name);
-    const safeMessage = nl2br(message);
+  const safeName = esc(name);
+  const safeMessage = nl2br(message);
 
-    const html = `<!doctype html>
+  const html = `<!doctype html>
   <html>
     <body style="margin:0;background:#f3f4f6;padding:30px;font-family:Arial,Helvetica,sans-serif;">
       <div style="max-width:640px;margin:auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e5e7eb;">
@@ -132,7 +132,7 @@ function buildUserEmail({ name, message, siteUrl }) {
     </body>
   </html>`;
 
-    const text = `Hi ${name},
+  const text = `Hi ${name},
 
 We received your message and will reply shortly.
 
@@ -143,69 +143,85 @@ ${siteUrl}
 — CodeNest
 `;
 
-    return { html, text };
+  return { html, text };
 }
 
 function createTransporter() {
-    return nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT || 587),
-        secure: String(process.env.SMTP_SECURE).toLowerCase() === "true", // true for 465
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-        },
-    });
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: String(process.env.SMTP_SECURE).toLowerCase() === "true", // true for 465
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
 }
 
 app.post("/api/contact", async (req, res) => {
-    try {
-        const { name, email, message, website } = req.body || {};
+  try {
+    const { name, email, message, website } = req.body || {};
 
-        // Honeypot for bots
-        if (website) return res.json({ ok: true });
+    // Honeypot for bots
+    if (website) return res.json({ ok: true });
 
-        if (!name || !email || !message) {
-            return res.status(400).json({ ok: false, error: "Missing fields" });
-        }
-
-        // Optional: basic length limits
-        if (String(name).length > 120 || String(email).length > 200 || String(message).length > 5000) {
-            return res.status(400).json({ ok: false, error: "Input too long" });
-        }
-
-        const transporter = createTransporter();
-
-        const submittedAt = new Date().toISOString().slice(0, 16).replace("T", " ");
-
-        // 1) Admin email
-        const admin = buildAdminEmail({ name, email, message, submittedAt });
-        await transporter.sendMail({
-            from: `"${process.env.MAIL_FROM_NAME || "codenest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
-            to: process.env.CONTACT_TO || process.env.MAIL_FROM || process.env.SMTP_USER,
-            replyTo: `"${name}" <${email}>`,
-            subject: "New contact form message",
-            html: admin.html,
-            text: admin.text,
-        });
-
-        // 2) User confirmation email
-        const user = buildUserEmail({ name, message, siteUrl: process.env.SITE_URL || "https://codenest.ro" });
-        await transporter.sendMail({
-            from: `"${process.env.MAIL_FROM_NAME || "CodeNest"}" <${process.env.MAIL_NOREPLY || process.env.MAIL_FROM || process.env.SMTP_USER}>`,
-            to: email,
-            replyTo: `"${process.env.MAIL_FROM_NAME || "CodeNest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
-            subject: "We received your message",
-            html: user.html,
-            text: user.text,
-        });
-
-        return res.json({ ok: true });
-    } catch (err) {
-        console.error("Contact error:", err);
-        return res.status(500).json({ ok: false, error: "Failed to send message" });
+    if (!name || !email || !message) {
+      return res.status(400).json({ ok: false, error: "Missing fields" });
     }
+
+    // Optional: basic length limits
+    if (String(name).length > 120 || String(email).length > 200 || String(message).length > 5000) {
+      return res.status(400).json({ ok: false, error: "Input too long" });
+    }
+
+    const transporter = createTransporter();
+
+    const submittedAt = new Date().toISOString().slice(0, 16).replace("T", " ");
+
+    // 1) Admin email
+    const admin = buildAdminEmail({ name, email, message, submittedAt });
+    await transporter.sendMail({
+      from: `"${process.env.MAIL_FROM_NAME || "codenest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
+      to: process.env.CONTACT_TO || process.env.MAIL_FROM || process.env.SMTP_USER,
+      replyTo: `"${name}" <${email}>`,
+      subject: "New contact form message",
+      html: admin.html,
+      text: admin.text,
+    });
+
+    // 2) User confirmation email
+    const user = buildUserEmail({ name, message, siteUrl: process.env.SITE_URL || "https://codenest.ro" });
+    await transporter.sendMail({
+      from: `"${process.env.MAIL_FROM_NAME || "CodeNest"}" <${process.env.MAIL_NOREPLY || process.env.MAIL_FROM || process.env.SMTP_USER}>`,
+      to: email,
+      replyTo: `"${process.env.MAIL_FROM_NAME || "CodeNest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
+      subject: "We received your message",
+      html: user.html,
+      text: user.text,
+    });
+
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Contact error:", err);
+    return res.status(500).json({ ok: false, error: "Failed to send message" });
+  }
 });
 
+/** ---------- Serve frontend (Vite build) ---------- */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Build Vite into: server/public
+const publicDir = path.join(__dirname, "public");
+
+// Serve static assets
+app.use(express.static(publicDir));
+
+// SPA fallback (React Router)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(publicDir, "index.html"));
+});
+
+/** ---------- Start server ---------- */
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server listening on ${port}`));

@@ -24,7 +24,7 @@ export function ContactForm() {
     setStatusMessage('');
 
     try {
-      const res = await fetch('https://codenest.ro/api/contact.php', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, website: '' }),
@@ -189,10 +189,10 @@ export function ContactForm() {
               {status !== 'idle' && statusMessage && (
                 <div
                   className={`rounded-xl border p-4 text-sm ${status === 'success'
-                      ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200'
-                      : status === 'error'
-                        ? 'border-red-500/30 bg-red-500/10 text-red-200'
-                        : 'border-[#1F2937] bg-[#0F1419] text-gray-300'
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200'
+                    : status === 'error'
+                      ? 'border-red-500/30 bg-red-500/10 text-red-200'
+                      : 'border-[#1F2937] bg-[#0F1419] text-gray-300'
                     }`}
                   style={{ fontFamily: 'Inter, sans-serif' }}
                 >
@@ -204,7 +204,7 @@ export function ContactForm() {
                 disabled={submitted}
                 whileHover={{ scale: submitted ? 1 : 1.02 }}
                 whileTap={{ scale: submitted ? 1 : 0.98 }}
-                
+
                 className="w-full px-8 py-4 bg-[#10B981] text-white rounded-xl hover:bg-[#059669] transition-colors flex items-center justify-center gap-3 disabled:bg-[#10B981] disabled:cursor-not-allowed shadow-lg shadow-[#10B981]/20"
                 style={{ fontFamily: 'Inter, sans-serif' }}
               >

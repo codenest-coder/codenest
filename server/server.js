@@ -1,10 +1,17 @@
 import express from "express";
 import nodemailer from "nodemailer";
 import "dotenv/config";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
+
+// cPanel / Passenger often runs behind a proxy
+app.set("trust proxy", 1);
+
 app.use(express.json({ limit: "200kb" }));
 
+/** ---------- helpers ---------- */
 function esc(s = "") {
   return String(s)
     .replaceAll("&", "&amp;")
@@ -18,6 +25,7 @@ function nl2br(s = "") {
   return esc(s).replaceAll("\n", "<br/>");
 }
 
+/** ---------- email templates ---------- */
 function buildAdminEmail({ name, email, message, submittedAt }) {
   const brandHeader = `
     <div style="background:#0F1419;padding:18px 24px;border-top-left-radius:12px;border-top-right-radius:12px;">
@@ -65,7 +73,7 @@ function buildAdminEmail({ name, email, message, submittedAt }) {
         </div>
 
         <div style="background:#f9fafb;padding:14px 24px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px;">
-          © ${new Date().getFullYear()} codenest • codenest.ro
+          © ${new Date().getFullYear()} CodeNest • codenest.ro
         </div>
       </div>
     </body>
@@ -146,6 +154,7 @@ ${siteUrl}
   return { html, text };
 }
 
+/** ---------- mailer ---------- */
 function createTransporter() {
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -157,6 +166,9 @@ function createTransporter() {
     },
   });
 }
+
+/** ---------- API ---------- */
+app.get("/api/health", (req, res) => res.json({ ok: true }));
 
 app.post("/api/contact", async (req, res) => {
   try {
@@ -170,18 +182,23 @@ app.post("/api/contact", async (req, res) => {
     }
 
     // Optional: basic length limits
-    if (String(name).length > 120 || String(email).length > 200 || String(message).length > 5000) {
+    if (
+      String(name).length > 120 ||
+      String(email).length > 200 ||
+      String(message).length > 5000
+    ) {
       return res.status(400).json({ ok: false, error: "Input too long" });
     }
 
     const transporter = createTransporter();
 
+    // In RO timezone you might prefer local time, but ISO is fine
     const submittedAt = new Date().toISOString().slice(0, 16).replace("T", " ");
 
     // 1) Admin email
     const admin = buildAdminEmail({ name, email, message, submittedAt });
     await transporter.sendMail({
-      from: `"${process.env.MAIL_FROM_NAME || "codenest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
+      from: `"${process.env.MAIL_FROM_NAME || "CodeNest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
       to: process.env.CONTACT_TO || process.env.MAIL_FROM || process.env.SMTP_USER,
       replyTo: `"${name}" <${email}>`,
       subject: "New contact form message",
@@ -190,7 +207,12 @@ app.post("/api/contact", async (req, res) => {
     });
 
     // 2) User confirmation email
-    const user = buildUserEmail({ name, message, siteUrl: process.env.SITE_URL || "https://codenest.ro" });
+    const user = buildUserEmail({
+      name,
+      message,
+      siteUrl: process.env.SITE_URL || "https://codenest.ro",
+    });
+
     await transporter.sendMail({
       from: `"${process.env.MAIL_FROM_NAME || "CodeNest"}" <${process.env.MAIL_NOREPLY || process.env.MAIL_FROM || process.env.SMTP_USER}>`,
       to: email,

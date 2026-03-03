@@ -214,9 +214,9 @@ app.post("/api/contact", async (req, res) => {
     });
 
     await transporter.sendMail({
-      from: `"${process.env.MAIL_FROM_NAME || "CodeNest"}" <${process.env.MAIL_NOREPLY || process.env.MAIL_FROM || process.env.SMTP_USER}>`,
+      from: `"${process.env.MAIL_FROM_NAME || "codenest"}" <${process.env.MAIL_NOREPLY || process.env.MAIL_FROM || process.env.SMTP_USER}>`,
       to: email,
-      replyTo: `"${process.env.MAIL_FROM_NAME || "CodeNest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
+      replyTo: `"${process.env.MAIL_FROM_NAME || "codenest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
       subject: "We received your message",
       html: user.html,
       text: user.text,

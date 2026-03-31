@@ -148,7 +148,7 @@ export function Sidebar() {
             <div className="relative flex-shrink-0">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#10B981]/20 to-transparent p-0.5">
                 <img
-                  src="../../../public/avatar.jpeg"
+                  src="/public/avatar.jpeg"
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover border-2 border-[#0F1419]"
                 />

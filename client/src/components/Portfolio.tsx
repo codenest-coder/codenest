@@ -24,6 +24,23 @@ const projects = [
     status: 'live' as const,
     statusLabel: 'Work in progress',
   },
+  {
+    title: 'DecoTapet',
+    description:
+      'Premium presentation website for a luxury wallpaper studio, focused on elegant product showcasing, immersive visuals, custom quote flows and refined user experience.',
+    tech: [
+      'React',
+      'TypeScript',
+      'Tailwind CSS',
+      'Framer Motion',
+      'WordPress API',
+      'Responsive Design',
+    ],
+    link: 'https://www.decotapet.ro',
+    image: 'https://www.decotapet.ro/wp-content/uploads/2026/02/311578516_596241655623692_4043110860003985037_n.jpg',
+    status: 'live' as const,
+    statusLabel: 'Live website',
+  },
 ];
 
 type Project = {

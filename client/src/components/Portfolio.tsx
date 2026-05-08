@@ -37,7 +37,7 @@ const projects = [
       'Responsive Design',
     ],
     link: 'https://www.decotapet.ro',
-    image: 'https://www.decotapet.ro/wp-content/uploads/2026/02/311578516_596241655623692_4043110860003985037_n.jpg',
+    image: 'https://codenest.ro/assets/Screenshot%202026-05-08%20at%2011.47.47.png',
     status: 'live' as const,
     statusLabel: 'Live website',
   },

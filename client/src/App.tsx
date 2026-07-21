@@ -7,6 +7,7 @@ import { Portfolio } from './components/Portfolio';
 import { Experience } from './components/Experience';
 import { About } from './components/About';
 import { LanguageProvider } from './contexts/LanguageContext';
+import Chat from './components/Chat/Chat'
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Portfolio />
           <Experience />
           <ContactForm />
+          <Chat />
         </div>
       </div>
     </LanguageProvider>

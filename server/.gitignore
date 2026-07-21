@@ -38,6 +38,7 @@ coverage/
 # =========================
 .env
 .env.*
+!.env.example
 *.local
 *.development
 *.production

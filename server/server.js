@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import "dotenv/config";
 import path from "path";
 import { fileURLToPath } from "url";
+import chatRoutes from "./routes/chat.routes.js";
 
 const app = express();
 
@@ -73,7 +74,7 @@ function buildAdminEmail({ name, email, message, submittedAt }) {
         </div>
 
         <div style="background:#f9fafb;padding:14px 24px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px;">
-          © ${new Date().getFullYear()} CodeNest • codenest.ro
+          © ${new Date().getFullYear()} codenest • codenest.ro
         </div>
       </div>
     </body>
@@ -124,7 +125,7 @@ function buildUserEmail({ name, message, siteUrl }) {
           <div style="margin-top:20px;">
             <a href="${esc(siteUrl)}"
                style="display:inline-block;background:#10B981;color:#0F1419;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:13px;">
-              Visit CodeNest
+              Visit codenest
             </a>
           </div>
 
@@ -134,7 +135,7 @@ function buildUserEmail({ name, message, siteUrl }) {
         </div>
 
         <div style="background:#f9fafb;padding:14px 24px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px;">
-          © ${new Date().getFullYear()} CodeNest • codenest.ro
+          © ${new Date().getFullYear()} codenest • codenest.ro
         </div>
       </div>
     </body>
@@ -148,7 +149,7 @@ Your message:
 ${message}
 
 ${siteUrl}
-— CodeNest
+— codenest
 `;
 
   return { html, text };
@@ -198,7 +199,7 @@ app.post("/api/contact", async (req, res) => {
     // 1) Admin email
     const admin = buildAdminEmail({ name, email, message, submittedAt });
     await transporter.sendMail({
-      from: `"${process.env.MAIL_FROM_NAME || "CodeNest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
+      from: `"${process.env.MAIL_FROM_NAME || "codenest"}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
       to: process.env.CONTACT_TO || process.env.MAIL_FROM || process.env.SMTP_USER,
       replyTo: `"${name}" <${email}>`,
       subject: "New contact form message",
@@ -238,6 +239,7 @@ const publicDir = path.join(__dirname, "public");
 
 // Serve static assets
 app.use(express.static(publicDir));
+app.use("/api/chat", chatRoutes);
 
 // SPA fallback (React Router)
 app.get("*", (req, res) => {
